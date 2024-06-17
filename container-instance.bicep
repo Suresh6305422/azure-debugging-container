@@ -1,13 +1,13 @@
-param logWorkspaceName string
-param acrName string
-param containerName string
-param imageName string
+param logWorkspaceName saripalliws
+param acrName saripalliacr
+param containerName saripalliaci
+param imageName nginx
 
-var registryServer = '${acrName}.azurecr.io'
-var image = '${registryServer}/${imageName}:latest'
+var registryServer = 'saripalliacr.azurecr.io'
+var image = 'saripalliacr.azurecr.io/nginx:latest'
 
 resource acrResource 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
-  name: acrName
+  name: saripalliacr
   scope: resourceGroup()
 }
 
@@ -22,7 +22,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01'
   properties: {
     containers: [
       {
-        name: 'debugging-${imageName}'
+        name: 'nginx'
         properties: {
           image: image
           resources: {
@@ -38,13 +38,14 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01'
     restartPolicy: 'Never'
     imageRegistryCredentials: [
       {
-        server: registryServer
-        username: acrResource.listCredentials().username
-        password: acrResource.listCredentials().passwords[0].value
+        server: saripalliacr.azurecr.io
+        username: Saripalliacr
+        password: m7re3COGKpS5VOM46F/S4WsPKn5P9AhSCmVKWUPJTB+ACRD+Gw8R
       }
     ]
     diagnostics: {
-      logAnalytics: {
+      logAnalytics: { 
+        logtype: 'ContainerInsights'
         workspaceId: logWS.properties.customerId
         workspaceKey: logWS.listKeys().primarySharedKey
       }
